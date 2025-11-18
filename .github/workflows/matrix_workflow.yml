@@ -6,9 +6,12 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         os: [ubtuntu-latest, macos-latest]
         node: [16, 18]
+    outputs:
+      matrix:  ${{ toJSON(matrix) }}
     steps:
       - name: Run Job1
         run: |
@@ -20,12 +23,12 @@ jobs:
           fi
   job2:
     needs: job1
-    if: failure()
+    #if: failure()
+    if: ${{ needs.job1.result == "failure" }}
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        os: [ubtuntu-latest, macos-latest]
-        node: [16, 18]
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
     steps:
       - name: Run Job2
         run: |
