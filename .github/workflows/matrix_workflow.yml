@@ -57,7 +57,7 @@ jobs:
       needs: job2
       strategy:
         fail-fast: false
-        matrix: ${{ fromJSON(needs.job2.outputs.matrix }}
+        matrix: ${{ fromJSON(needs.job2.outputs.matrix) }}
       steps:  
       - name: Run Job2
         run: |
