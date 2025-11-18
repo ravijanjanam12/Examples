@@ -12,8 +12,12 @@ jobs:
     steps:
       - name: Run Job1
         run: |
-          echo "Running Job1 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
-          exit 1
+          if [[ ${{ matrix.os }} == "macos-latest" ]];then
+            echo "Running Job1 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
+            exit 1
+          else
+            echo "Running Job1 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
+          fi
   job2:
     needs: job1
     if: failure()
