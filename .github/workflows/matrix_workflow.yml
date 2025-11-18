@@ -24,12 +24,15 @@ jobs:
   job2:
     needs: job1
     #if: failure()
-    if: ${{ needs.job1.result == 'failure' }}
+    
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
+    #if: ${{ needs.job1.result == 'failure' }}
     steps:
       - name: Run Job2
         run: |
+          echo "Matrix is"
+          echo "${{ matrix }}"
           echo "Running Job2 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
