@@ -1,0 +1,28 @@
+name: Matrix Workflow Example
+
+on: workflow_dispatch
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubtuntu-latest, macos-latest]
+        node: [16, 18]
+    steps:
+      - name: Run Job1
+        run: |
+          echo "Running Job1 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
+          exit 1
+  job2:
+    needs: job1
+    if: failure()
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubtuntu-latest, macos-latest]
+        node: [16, 18]
+    steps:
+      - name: Run Job2
+        run: |
+          echo "Running Job2 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
