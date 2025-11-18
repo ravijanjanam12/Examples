@@ -21,18 +21,47 @@ jobs:
           else
             echo "Running Job1 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
           fi
+      - name: upload failed matrix
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-matrix
+          path: failed.json
   job2:
     # needs: job1
     # if: failure()
     
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
+    # strategy:
+    #   fail-fast: false
+    #   matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
     #if: ${{ needs.job1.result == 'failure' }}
     steps:
+      - name: download failed matrix
+        uses: actions/download-artifact@v4
+        with: 
+          name: failed-matrix
+
+      - name: Prepare Dynamic matrix
+        id: set-matrix
+        run: |
+          MATRIX=$(jq -s '.' failed.json)
+          echo "matrix=$MATRIX" >> GITHUB_OUTPUT
+          echo "====="
+          cat failed.json
+          echo "====="
+          echo $matrix
+          
+  job2-matrix:
+      runs-on: ubuntu-latest
+      needs: job2
+      strategy:
+        fail-fast: false
+        matrix: ${{ from JSON(needs.job2.outputs.matrix }}
+      steps:  
       - name: Run Job2
         run: |
+          echo "Running Job2 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
           echo "Matrix is"
           echo "${{ matrix }}"
-          echo "Running Job2 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
+          
