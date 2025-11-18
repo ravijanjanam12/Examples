@@ -22,8 +22,8 @@ jobs:
             echo "Running Job1 on OS=${{ matrix.os }} Node=${{ matrix.node }}"
           fi
   job2:
-    needs: job1
-    if: failure()
+    # needs: job1
+    # if: failure()
     
     runs-on: ubuntu-latest
     strategy:
